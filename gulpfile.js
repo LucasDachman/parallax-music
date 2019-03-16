@@ -24,7 +24,7 @@ var paths = {
 	scripts: {
 		input: 'src/js/*',
 		output: 'dist/js/',
-		entry: 'src/js/main.js'
+		entry: ['src/js/main.js', 'src/js/animation.js']
 	},
 	styles: {
 		input: 'src/sass/**/*.{scss,sass}',
@@ -70,12 +70,14 @@ var banner = {
  */
 
 // General
-var {gulp, src, dest, watch, series, parallel} = require('gulp');
+var { gulp, src, dest, watch, series, parallel } = require('gulp');
 var del = require('del');
 var rename = require('gulp-rename');
 var header = require('gulp-header');
 var package = require('./package.json');
 var source = require('vinyl-source-stream');
+var merge = require('merge-stream');
+var concat = require('gulp-concat');
 
 // Scripts
 var jshint = require('gulp-jshint');
@@ -113,16 +115,16 @@ var cleanDist = function (done) {
 
 };
 
-var bundlejs = function(done) {
+var bundlejs = function (done) {
 
 	// Make sure this feature is activated before running
 	if (!settings.scripts) return done();
 
 	browserify(paths.scripts.entry)
-		.transform("babelify", {presets: ["@babel/preset-env"]})
+		.transform("babelify", { presets: ["@babel/preset-env"] })
 		.bundle()
 		.pipe(source('bundle.js'))
-		.pipe(header(banner.full, { package : package }))
+		.pipe(header(banner.full, { package: package }))
 		.pipe(dest(paths.scripts.output));
 
 	return done();
@@ -136,7 +138,7 @@ var lintScripts = function (done) {
 
 	// Lint scripts
 	src(paths.scripts.input)
-		.pipe(jshint({esversion: 6}))
+		.pipe(jshint({ esversion: 6 }))
 		.pipe(jshint.reporter('jshint-stylish'));
 
 	// Signal completion
@@ -150,8 +152,8 @@ var buildStyles = function (done) {
 	// Make sure this feature is activated before running
 	if (!settings.styles) return done();
 
-	// Run tasks on all Sass files
-	src(paths.styles.input)
+	const normalize = src('node_modules/normalize.css/normalize.css')
+	const styles = src(paths.styles.input)
 		.pipe(sass({
 			outputStyle: 'expanded',
 			sourceComments: true
@@ -161,17 +163,18 @@ var buildStyles = function (done) {
 			cascade: true,
 			remove: true
 		}))
-		.pipe(header(banner.full, { package : package }))
+		.pipe(header(banner.full, { package: package }))
+	merge(normalize, styles)
+		.pipe(concat('app.css'))
 		.pipe(dest(paths.styles.output))
-		.pipe(rename({suffix: '.min'}))
+		.pipe(rename({ suffix: '.min' }))
 		.pipe(minify({
 			discardComments: {
 				removeAll: true
 			}
 		}))
-		.pipe(header(banner.min, { package : package }))
+		.pipe(header(banner.min, { package: package }))
 		.pipe(dest(paths.styles.output));
-
 	// Signal completion
 	done();
 
