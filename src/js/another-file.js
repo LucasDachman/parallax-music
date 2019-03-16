@@ -1,1 +1,0 @@
-module.exports = function () { console.log('another-file.js file loaded'); };

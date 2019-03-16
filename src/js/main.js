@@ -1,4 +1,5 @@
 const Tone = require('tone');
+
 Tone.Transport.BPM = 88;
 //a 4 voice Synth
 const synth = new Tone.PolySynth(4, Tone.Synth);
