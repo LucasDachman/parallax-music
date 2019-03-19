@@ -2,30 +2,35 @@
  * @section Base Styles
  */
 
+html {
+}
+
 body {
-	font-size: 125%;
-	margin: 0 auto;
-	max-width: 42em;
-	width: 88%;
+  font-size: 125%;
+  margin: 0 auto;
+  max-width: 42em;
+  width: 88%;
+  background-color: black;
+  overscroll-behavior: none;
 }
 
 input,
 textarea,
 select,
 button {
-	font: inherit;
+  font: inherit;
 }
 
 .container {
-	height: 5000px;
+  height: 7000px;
 }
 
 #scrollpos {
-	position: fixed;
+  position: fixed;
 }
 
 #drawing {
-	position: fixed;
-	height: 100%;
-	width:100%;
+  position: fixed;
+  height: 100%;
+  width: 100%;
 }
