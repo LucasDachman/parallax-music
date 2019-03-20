@@ -1,23 +1,21 @@
 const Tone = require('tone');
+const { getScrollRatio } = require('./util');
 
 Tone.Transport.BPM = 88;
 //a 4 voice Synth
 const synth = new Tone.PolySynth(4, Tone.Synth);
-synth.detune.value = 20;
 synth.set({
-    "envelope": {
-        "decay": "2m",
-        'sustain': 0.07
+    detune: 20,
+    envelope: {
+        decay: 20,
+        sustain: 5
     }
 });
 
-const filter = new Tone.AutoFilter('4n');
-filter.set({
-    filter: {
-        Q: 5
-    },
-    octaves: 3,
-    baseFrequency: 400
+const filter = new Tone.Filter({
+    frequency: 1000,
+    type: 'lowpass',
+    Q: 5
 });
 
 const phaser = new Tone.Phaser(0.2, 2);
@@ -26,17 +24,29 @@ phaser.set({
 });
 
 synth.chain(
+    new Tone.Volume(-36),
     new Tone.Vibrato(),
     phaser,
     filter,
     new Tone.JCReverb(),
-    new Tone.Volume(-24),
+    new Tone.Volume(-36),
     Tone.Master
 );
 
 //play a chord
 document.querySelector('#play').addEventListener('click', () => {
     Tone.context.resume();
-    filter.start();
     synth.triggerAttackRelease(["C4", "E4", "G4", "B4"], "2m");
+});
+
+document.addEventListener('scroll', () => {
+    const scrollR = getScrollRatio();
+    filter.frequency.value = scrollR * (3000 - 100) + 100
+    console.log(scrollR);
+    
+
+    if ( [0.00, 1.00].includes(scrollR)) {
+        Tone.context.resume();
+        synth.triggerAttackRelease(["C4", "E4", "G4", "B4"], 10);
+    }
 });
