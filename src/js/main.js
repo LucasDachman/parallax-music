@@ -33,20 +33,16 @@ synth.chain(
     Tone.Master
 );
 
-//play a chord
-document.querySelector('#play').addEventListener('click', () => {
-    Tone.context.resume();
-    synth.triggerAttackRelease(["C4", "E4", "G4", "B4"], "2m");
-});
+// start audio
+Tone.context.resume();
+synth.triggerAttack(["C4", "E4", "G4", "B4"]);
 
 document.addEventListener('scroll', () => {
     const scrollR = getScrollRatio();
-    filter.frequency.value = scrollR * (3000 - 100) + 100
-    console.log(scrollR);
-    
+    filter.frequency.value = Math.pow(scrollR, 3) * (5000 - 100) + 100
 
-    if ( [0.00, 1.00].includes(scrollR)) {
+    if ([0.00, 1.00].includes(scrollR)) {
         Tone.context.resume();
-        synth.triggerAttackRelease(["C4", "E4", "G4", "B4"], 10);
+        synth.triggerAttack(["C4", "E4", "G4", "B4"]);
     }
 });

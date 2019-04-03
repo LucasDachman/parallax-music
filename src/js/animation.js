@@ -1,9 +1,6 @@
 require('svg.js');
 const { getScrollRatio, getRandomF, getRandomFP } = require('./util');
 
-// Global Variables
-const label = document.querySelector('#scrollpos');
-
 
 // generate dots 
 function genDots(num, minSize, maxSize) {
@@ -38,7 +35,7 @@ function move(svg) {
 function updatePath() {
   requestAnimationFrame(() => {
     const ps = points();
-    path.plot(ps);
+    path.plot(ps).opacity(getScrollRatio());
   });
 }
 
