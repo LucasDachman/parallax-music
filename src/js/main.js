@@ -29,7 +29,7 @@ synth.chain(
     phaser,
     filter,
     new Tone.JCReverb(),
-    new Tone.Volume(-36),
+    new Tone.Volume(-6),
     Tone.Master
 );
 
@@ -41,8 +41,10 @@ document.addEventListener('scroll', () => {
     const scrollR = getScrollRatio();
     filter.frequency.value = Math.pow(scrollR, 3) * (5000 - 100) + 100
 
-    if ([0.00, 1.00].includes(scrollR)) {
-        Tone.context.resume();
-        synth.triggerAttack(["C4", "E4", "G4", "B4"]);
+    if (scrollR > 0.9 || scrollR < 0.1) {
+        Tone.context.resume().then(() => {
+            console.log("trigger attack");
+            synth.triggerAttack(["C4", "E4", "G4", "B4"]);
+        });
     }
 });
