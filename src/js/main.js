@@ -34,8 +34,9 @@ synth.chain(
 );
 
 // start audio
-Tone.context.resume();
+Tone.context.resume().then(() => {
 synth.triggerAttack(["C4", "E4", "G4", "B4"]);
+});
 
 document.addEventListener('scroll', () => {
     const scrollR = getScrollRatio();
